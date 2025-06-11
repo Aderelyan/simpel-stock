@@ -56,6 +56,7 @@
                 <?= $this->renderSection('content') ?>
             </main>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </div>
 </body>
 </html>

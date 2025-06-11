@@ -17,23 +17,39 @@ class BarangModel extends Model
     protected $allowedFields    = ['Kode_brg', 'Nama_brg', 'Satuan', 'Jml_stok'];
 
 
-    public function simpanDataBarang($data)
-    {
-        // Ganti 'sp_simpan_barang' dengan nama Stored Procedure Anda
-        $sql = "CALL tambah_barang(?, ?, ?, ?)";
-    
-        try {
-            $this->db->query($sql, [
-                $data['Kode_brg'],
-                $data['Nama_brg'],
-                $data['Satuan'],
-                $data['Jml_stok']
-            ]);
-            return true; // Jika sukses, kembalikan true
-        } catch (\Exception $e) {
-            // Jika gagal, KEMBALIKAN PESAN ERROR-NYA
-            return $e->getMessage();
-        }
+    public function tambahBarang($data)
+{
+    // 1. Cek apakah Kode_brg sudah ada
+    if ($this->find($data['Kode_brg'])) {
+        return "Error: Kode barang sudah terpakai."; // Kembalikan pesan error spesifik
     }
+
+    // 2. Jika tidak ada, panggil procedure INSERT
+    $sql = "CALL tambah_barang(?, ?, ?, ?)";
+    try {
+        $this->db->query($sql, [$data['Kode_brg'], $data['Nama_brg'], $data['Satuan'], $data['Jml_stok']]);
+        return true;
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+}
+
+public function updateBarang($data)
+{
+    // 1. Cek apakah Kode_brg ada untuk di-update
+    if (!$this->find($data['Kode_brg'])) {
+        return "Error: Barang dengan kode ini tidak ditemukan."; // Kembalikan pesan error spesifik
+    }
+
+    // 2. Jika ada, panggil procedure UPDATE
+    $sql = "CALL update_barang(?, ?, ?, ?)";
+    try {
+        $this->db->query($sql, [$data['Kode_brg'], $data['Nama_brg'], $data['Satuan'], $data['Jml_stok']]);
+        return true;
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+    }
+
 }
 

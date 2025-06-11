@@ -9,6 +9,10 @@
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     th { background-color: #f8f9fa; }
+    /* CSS untuk tombol aksi */
+    .btn-aksi { padding: 5px 10px; border-radius: 4px; border: none; color: white; cursor: pointer; margin-right: 5px; }
+    .btn-edit { background-color: #ffc107; }
+    .btn-delete { background-color: #dc3545; }
 </style>
 
 <div class="data-section">
@@ -23,7 +27,7 @@
                 <th>Nama Barang</th>
                 <th>Satuan</th>
                 <th>Jumlah Stok</th>
-            </tr>
+                <th>Aksi</th> </tr>
         </thead>
         <tbody id="data-tabel-barang">
             </tbody>
@@ -32,11 +36,8 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    // Letakkan seluruh kode JavaScript untuk Display (AJAX) di sini
-    // Salin dari file barang/index.php yang lama
     $(document).ready(function () {
-        // Ketika tombol dengan id #btn-display di-klik
-        $('#btn-display').on('click', function() {
+        function loadDataBarang() {
             $.ajax({
                 url: "<?= base_url('/barang/list') ?>",
                 type: "GET",
@@ -49,17 +50,58 @@
                                     '<td>' + data[i].Nama_brg + '</td>' +
                                     '<td>' + data[i].Satuan + '</td>' +
                                     '<td>' + data[i].Jml_stok + '</td>' +
+                                    /* 2. TAMBAHKAN KOLOM AKSI DENGAN TOMBOL */
+                                    '<td>' +
+                                        '<button class="btn-aksi btn-edit" data-kode="' + data[i].Kode_brg + '">Edit</button>' +
+                                        '<button class="btn-aksi btn-delete" data-kode="' + data[i].Kode_brg + '">Delete</button>' +
+                                    '</td>' +
                                 '</tr>';
                     }
                     $('#data-tabel-barang').html(html);
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert('Error: Gagal memuat data!');
-                    console.log(jqXHR, textStatus, errorThrown);
+                error: function() {
+                    var errorRow = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal memuat data. Coba lagi nanti.</td></tr>';
+                    $('#data-tabel-barang').html(errorRow);
                 }
             });
+        }
+
+        $('#btn-display').on('click', function() {
+            loadDataBarang();
         });
+
+        loadDataBarang();
     });
+
+    // Event handler untuk semua tombol .btn-edit di dalam tabel
+$('#data-tabel-barang').on('click', '.btn-edit', function() {
+    var kode_brg = $(this).data('kode'); // Ambil Kode_brg dari atribut data-kode
+
+    // Ambil data spesifik dari server
+    $.ajax({
+        url: "<?= base_url('/barang/edit/') ?>" + kode_brg,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data) {
+            // Simpan data ke localStorage
+            localStorage.setItem('editDataBarang', JSON.stringify(data));
+
+            // Arahkan pengguna ke halaman input form
+            window.location.href = "<?= base_url('/barang') ?>";
+        },
+        error: function() {
+    Swal.fire({
+        title: 'Oops...',
+        text: 'Gagal memuat data. Coba lagi nanti.',
+        icon: 'error'
+    });
+    // Tampilkan pesan di tabel juga
+    var errorRow = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal memuat data.</td></tr>';
+    $('#data-tabel-barang').html(errorRow);
+}
+    });
+});
+
 </script>
 
 <?= $this->endSection() ?>

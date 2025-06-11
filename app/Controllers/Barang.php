@@ -24,41 +24,52 @@ class Barang extends BaseController
         return $this->response->setJSON($data);
     }
 
-    public function save()
-    {
-        if ($this->request->isAJAX()) {
-            $model = new BarangModel();
-    
-            $data = [
-                'Kode_brg' => $this->request->getPost('Kode_brg'),
-                'Nama_brg' => $this->request->getPost('Nama_brg'),
-                'Satuan'   => $this->request->getPost('Satuan'),
-                'Jml_stok' => $this->request->getPost('Jml_stok'),
-            ];
-    
-            // Panggil method di model
-            $result = $model->simpanDataBarang($data);
-    
-            // Periksa apakah hasilnya BENAR-BENAR true
-            if ($result === true) {
-                $response = [
-                    'status'  => 'success',
-                    'message' => 'Data barang berhasil disimpan!'
-                ];
-            } else {
-                // Jika bukan true, berarti isinya adalah pesan error
-                $response = [
-                    'status'  => 'error',
-                    'message' => 'Gagal menyimpan data: ' . $result // Tambahkan pesan error di sini
-                ];
-            }
-    
-            return $this->response->setJSON($response);
+    public function add()
+{
+    if ($this->request->isAJAX()) {
+        $model = new BarangModel();
+        $data = $this->request->getPost();
+        $result = $model->tambahBarang($data);
+
+        if ($result === true) {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Data barang berhasil ditambahkan!']);
+        } else {
+            return $this->response->setJSON(['status' => 'error', 'message' => $result]);
         }
     }
+}
+
+public function update()
+{
+    if ($this->request->isAJAX()) {
+        $model = new BarangModel();
+        $data = $this->request->getPost();
+        $result = $model->updateBarang($data);
+
+        if ($result === true) {
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Data barang berhasil diperbarui!']);
+        } else {
+            return $this->response->setJSON(['status' => 'error', 'message' => $result]);
+        }
+    }
+}
     public function history()
 {
     return view('barang/history');
 }
-}
 
+public function edit($kode_brg)
+{
+    $model = new BarangModel();
+    // Gunakan fungsi find() bawaan CodeIgniter untuk mencari berdasarkan Primary Key
+    $data = $model->find($kode_brg);
+
+    if ($data) {
+        return $this->response->setJSON($data);
+    } else {
+        return $this->response->setStatusCode(404, 'Data tidak ditemukan');
+    }
+
+    }
+
+}
