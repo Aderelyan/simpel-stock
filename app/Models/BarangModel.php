@@ -51,5 +51,34 @@ public function updateBarang($data)
     }
     }
 
+    public function resetData()
+    {
+        try {
+            // Kita gunakan perintah SQL mentah untuk melewati fitur keamanan CI4.
+            // Perintah ini secara eksplisit mengatakan "hapus semua dari tabel stok".
+            $this->db->query("DELETE FROM stok");
+            return true;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function deletePembelian($kode_barang)
+{
+    // Cek dulu apakah data transaksinya ada
+    if (!$this->find($kode_barang)) {
+        return "Error: Data transaksi dengan kode ini tidak ditemukan.";
+    }
+
+    // Ganti 'sp_hapus_pembelian' dengan nama procedure Anda yang sebenarnya
+    $sql = "CALL hapus_barang(?)";
+    try {
+        $this->db->query($sql, [$kode_barang]);
+        return true;
+    } catch (\Exception $e) {
+        // Menangkap error jika ada masalah di database
+        return "Gagal menghapus data: " . $e->getMessage();
+    }
+}
 }
 

@@ -9,6 +9,7 @@
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     th { background-color: #f8f9fa; }
+    #btn-reset-barang { background-color: #dc3545; margin-left:10px; }
     /* CSS untuk tombol aksi */
     .btn-aksi { padding: 5px 10px; border-radius: 4px; border: none; color: white; cursor: pointer; margin-right: 5px; }
     .btn-edit { background-color: #ffc107; }
@@ -18,7 +19,7 @@
 <div class="data-section">
     <div class="data-section-header">
         <h2>Data History Barang</h2>
-        <button id="btn-display">Tampilkan/Refresh Data</button>
+         <button id="btn-reset-barang">Reset Data</button> </div>
     </div>
     <table>
         <thead>
@@ -66,8 +67,35 @@
             });
         }
 
-        $('#btn-display').on('click', function() {
-            loadDataBarang();
+        $('#btn-reset-barang').on('click', function() {
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: "Semua data barang akan dihapus permanen. Aksi ini tidak dapat dibatalkan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Semua!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika user konfirmasi, kirim request AJAX untuk mereset
+                    $.ajax({
+                        url: "<?= base_url('/barang/reset') ?>",
+                        type: "POST",
+                        dataType: "JSON",
+                        success: function(response) {
+    if (response.status === 'success') {
+        Swal.fire('Dihapus!', response.message, 'success');
+        loadDataBarang(); // Muat ulang tabel
+    } else {
+        // Jika status dari backend adalah 'error', tampilkan pesannya
+        Swal.fire('Gagal!', response.message, 'error');
+    }
+},
+                    });
+                }
+            })
         });
 
         loadDataBarang();
