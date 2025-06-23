@@ -80,4 +80,32 @@
         </div>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('#form-login').on('submit', function(event) {
+            event.preventDefault(); // Mencegah form dikirim secara normal
+
+            $.ajax({
+                url: "<?= base_url('/login/auth') ?>",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "JSON",
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Jika sukses, arahkan ke halaman utama
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Jika gagal, tampilkan notifikasi error
+                        Swal.fire('Login Gagal', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Oops...', 'Terjadi kesalahan server saat mencoba login.', 'error');
+                }
+            });
+        });
+    });
+</script>
 </html>

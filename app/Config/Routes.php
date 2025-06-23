@@ -7,6 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', 'Login::index');
+$routes->get('/login', 'Login::index');
+$routes->post('/login/auth', 'Login::auth');
+$routes->get('/', 'Login::index');
 $routes->get('/barang', 'Barang::index');
 $routes->get('/barang/history', 'Barang::history');
 $routes->get('/barang/list', 'Barang::listData'); 

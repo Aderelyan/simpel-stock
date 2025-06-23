@@ -55,4 +55,27 @@ abstract class BaseController extends Controller
 
         // E.g.: $this->session = service('session');
     }
+
+    protected function getDbConnection()
+{
+    $session = session();
+
+    // Jika tidak login, kembalikan null
+    if (!$session->get('is_logged_in')) {
+        return null;
+    }
+
+    // Ambil kredensial dari session
+    $config = [
+        'hostname' => 'localhost',
+        'username' => $session->get('db_user'),
+        'password' => $session->get('db_pass'),
+        'database' => 'db_simpel_stock', // Pastikan nama DB ini benar
+        'DBDriver' => 'MySQLi',
+        'DBDebug'  => true,
+    ];
+
+    // Buat dan kembalikan object koneksi
+    return \Config\Database::connect($config);
+}
 }

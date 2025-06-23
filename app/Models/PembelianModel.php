@@ -15,7 +15,14 @@ class PembelianModel extends Model
     // Sesuaikan dengan semua kolom di tabel 'stok'
     protected $allowedFields    = ['Kd_trans', 'Tgl_trans', 'kode_brg', 'Jml_beli'];
 
-   
+    protected $db;
+
+    public function __construct()
+    {
+        // Panggil koneksi database default agar bisa digunakan
+        parent::__construct();
+        $this->db = \Config\Database::connect();
+    }
 
 public function tambahPembelian($data)
 {

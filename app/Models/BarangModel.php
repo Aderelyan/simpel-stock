@@ -16,7 +16,14 @@ class BarangModel extends Model
     // Sesuaikan dengan semua kolom di tabel 'stok'
     protected $allowedFields    = ['Kode_brg', 'Nama_brg', 'Satuan', 'Jml_stok'];
 
+    protected $db;
 
+public function __construct()
+{
+    // Panggil koneksi database default agar bisa digunakan
+    parent::__construct();
+    $this->db = \Config\Database::connect();
+}
     public function tambahBarang($data)
 {
     // 1. Cek apakah Kode_brg sudah ada

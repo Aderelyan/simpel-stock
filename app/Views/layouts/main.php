@@ -25,6 +25,14 @@
         .sidebar-nav li a { display: block; padding: 15px 20px; border-radius: 5px; margin-bottom: 10px; transition: background-color 0.3s; }
         .sidebar-nav li a:hover, .sidebar-nav li a.active { background-color: #34495e; }
 
+        .logout-link {
+            padding: 5px 10px; border: none; border-radius: 4px; color: white; cursor: pointer; margin-right: 10px;
+    background-color: #dc3545 ;
+}
+.logout-link:hover {
+    text-decoration: underline;
+}
+
         /* Content Area Styling */
         .content-area { padding: 30px; }
     </style>
@@ -49,7 +57,9 @@
                     Stok App
                 </div>
                 <div class="user-info">
-                    Login sebagai: <strong>Admin</strong> </div>
+    Login sebagai: <strong><?= session()->get('username') ?? 'Guest' ?></strong>
+    <a href="<?= base_url('/login') ?>" class="logout-link">Logout</a>
+</div>
             </header>
 
             <main class="content-area">
